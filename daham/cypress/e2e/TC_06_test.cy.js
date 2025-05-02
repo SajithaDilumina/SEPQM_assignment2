@@ -12,7 +12,7 @@ describe('TC_09 - Measure Login Page Load and Login Submission Time', () => {
       const endPageLoad = new Date().getTime();
       const pageLoadTime = endPageLoad - startPageLoad;
 
-      cy.log(`🚀 Login Page Load Time: ${pageLoadTime} ms`);
+      cy.log(`Login Page Load Time: ${pageLoadTime} ms`);
       expect(pageLoadTime).to.be.lessThan(thresholds.pageLoad);
 
       // Step 2: Perform login and measure time
@@ -27,12 +27,12 @@ describe('TC_09 - Measure Login Page Load and Login Submission Time', () => {
         const endLogin = new Date().getTime();
         const loginTime = endLogin - startLogin;
 
-        cy.log(`🔐 Login Submission Time: ${loginTime} ms`);
+        cy.log(`Login Submission Time: ${loginTime} ms`);
         expect(loginTime).to.be.lessThan(thresholds.loginTime);
 
         // Optional logging
         if (pageLoadTime > thresholds.pageLoad || loginTime > thresholds.loginTime) {
-          cy.writeFile('cypress/logs/performance_log.txt', `⚠️ Page Load: ${pageLoadTime}ms | Login Time: ${loginTime}ms\n`, { flag: 'a+' });
+          cy.writeFile('cypress/logs/performance_log.txt', ` Page Load: ${pageLoadTime}ms | Login Time: ${loginTime}ms\n`, { flag: 'a+' });
           cy.screenshot('login-performance-warning');
         }
       });
