@@ -1,31 +1,33 @@
-describe('TC_03 - Search Functionality', () => {
-    it('should display correct search results after login', () => {
-      cy.visit('http://yourapplication.com/login'); // Use your actual app's URL
-  
-      // Login
-      cy.get('#username').should('be.visible').type('validUser');
-      cy.get('#password').should('be.visible').type('validPassword');
-      cy.get('#loginButton').should('be.visible').click();
-  
-      // Wait or assert successful login if needed
-      // cy.url().should('include', '/dashboard');
-  
-      // Perform Search
-      cy.get('#searchBox').should('be.visible').type('testing');
-      cy.get('#searchButton').should('be.visible').click();
-  
-      // Assert results contain the search term
-      cy.get('#searchResults')
-        .should('be.visible')
-        .invoke('text')
-        .then((text) => {
-          if (text.includes('testing')) {
-            cy.log('TC_03 - Search functionality: PASSED');
-          } else {
-            cy.log('TC_03 - Search functionality: FAILED');
-            throw new Error('Search term not found in results');
-          }
-        });
-    });
+describe("PIM - Employee Search Functionality", () => {
+  beforeEach(() => {
+    cy.visit("https://opensource-demo.orangehrmlive.com/");
+    cy.get('input[name="username"]').type("Admin");
+    cy.get('input[name="password"]').type("admin123");
+    cy.get('button[type="submit"]').click();
+    cy.url().should("include", "/dashboard");
+
+    // Navigate to PIM section
+    cy.contains("PIM").click();
+    cy.url().should("include", "/pim/viewEmployeeList");
   });
-  
+
+  it("TC_03.1: Should return correct employee details in PIM search results", () => {
+    cy.get('input[placeholder="Type for hints..."]').first().type("Joy");
+    cy.get('button[type="submit"]').contains("Search").click();
+
+    cy.get(".oxd-table-body", { timeout: 10000 })
+      .should("be.visible")
+      .within(() => {
+        cy.contains(".oxd-table-cell", "Joy").should("exist");
+      });
+  });
+
+  it("TC_03.2: Should return no results when searching for a non-existent employee", () => {
+    cy.get('input[placeholder="Type for hints..."]')
+      .first()
+      .type("IamNotAnEmployee");
+    cy.get('button[type="submit"]').contains("Search").click();
+
+    cy.get(".oxd-table-body").find(".oxd-table-row").should("have.length", 0);
+  });
+});
